@@ -1,0 +1,26 @@
+{
+  "name": "gallery-react",
+  "version": "0.0.0",
+  "description": "A gallery application implemented using react.",
+  "main": "index.js",
+  "scripts": {
+    "start": "webpack-dev-server --hot"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mly-zju/reactGallery.git"
+  },
+  "keywords": [
+    "gallery",
+    "react"
+  ],
+  "author": "Ma Lingyang",
+  "license": "BSD",
+  "bugs": {
+    "url": "https://github.com/mly-zju/reactGallery/issues"
+  },
+  "dependencies": {
+    "react": "~15.0.2",
+    "react-dom": "~15.0.2"
+  }
+}
