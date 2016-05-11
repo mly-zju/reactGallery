@@ -1,9 +1,10 @@
 *{margin:0;padding:0;}
 html,body{ heigth:100%;width:100%;background-color:#ddd; }
 .stage{ width:100%;position:relative;background-color:#ddd;overflow:hidden; }
-.img-stage{ width:100%;height:100%;position:relative; }
-.img-figure{ width:240px;height:280px;padding:20px;background-color:white;position:absolute;transition:all 0.5s ease-out;-webkit-transition:all 0.5s ease-out;-transform:translatez(0);-webkit-transition:translatez(0);}
+.img-stage{ width:100%;height:100%;position:relative;perspective:1800px; }
+.img-figure{ width:240px;height:280px;padding:20px;background-color:white;position:absolute;transition:all 0.5s     ease-out;-webkit-transition:all 0.5s ease-out;-webkit-transform-origin:0 50% 0;-webkit-transform-style:preserve-3d;cursor:pointer;}
+.img-inverse{ transform:rotateY(180deg);-webkit-transform:translate(280px) rotateY(180deg);}
 .img-figure figcaption{ margin-top:10px;text-align:center; }
-
+.img-back{ width:100%;height:100%;position:absolute;z-index:2;top:0;left:0;-webkit-transform:rotateY(180deg);-webkit-backface-visibility:hidden;box-sizing:border-box;padding:20px;background-color:white;}
 .ctrl-stage{ width:100%;height:20px;padding:5px 0 5px 0;text-align:center; backgroun-color:#aaa;position:absolute;bottom:15px; }
 .ctrl-spot{ display:inline-block;width:20px;height:20px;border-radius:50%;margin:0 5px 0 5px;cursor:pointer; }

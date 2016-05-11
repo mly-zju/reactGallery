@@ -8,21 +8,47 @@ function getRandomAngle(){
   return Math.random()>0.5?Math.ceil(Math.random()*30)+'deg':'-'+Math.ceil(Math.random()*30)+'deg';
 }
 
+var data=[];
+for(var i=0;i<11;i++){
+  data[i]={};
+  data[i].imgUrl='./img/'+i+'.jpg';
+  data[i].title='Hello World';
+}
+
 var ImageModule=React.createClass({
+  handleClick: function(){
+    if(!this.props.arrange.isCenter){
+      this.props.reArrange();
+    }else{
+      if(this.props.arrange.isInverse){
+        this.props.forward();
+      }else{
+        this.props.inverse();
+      }
+    }
+  },
+
   render: function(){
     var styleObj={};
+    var myClass='img-figure';
     var t=this;
     styleObj.left=this.props.arrange.pos.left;
     styleObj.top=this.props.arrange.pos.top;
-    ['WebkitTransform','MozTransform','msTransform','transform'].forEach(function(value){
-      styleObj[value]='rotate('+t.props.arrange.rotate+')';
-    });
+    if(!this.props.arrange.isCenter){
+      ['WebkitTransform','MozTransform','msTransform','transform'].forEach(function(value){
+        styleObj[value]='rotate('+t.props.arrange.rotate+')';
+      });
+    }
     styleObj.zIndex=this.props.arrange.isCenter?1:0;
+    myClass+=this.props.arrange.isInverse?' img-inverse':'';
     return (
-      <figure className='img-figure' style={styleObj}>
+      <figure className={myClass} style={styleObj} onClick={this.handleClick}>
         <img src={this.props.data.imgUrl} alt={this.props.data.title}/>
         <figcaption>
           <h2>{this.props.data.title}</h2>
+          <div className='img-back'>
+            This is the back side! You can put description of the picture here!
+          </div>
         </figcaption>
       </figure>
     )
@@ -57,8 +83,7 @@ var GalleryApp=React.createClass({
     topMin:0,
     topMax:0,
     leftCenter:0,
-    topCenter:0,
-    stageHeight:0
+    topCenter:0
   },
 
   getInitialState: function(){
@@ -71,8 +96,7 @@ var GalleryApp=React.createClass({
       }
         rotate:0,
         isInverse: false,
-        isCenter: false,
-        zIndex: 0
+        isCenter: false
         */
       ],
       stageHeight:window.innerHeight
@@ -90,6 +114,7 @@ var GalleryApp=React.createClass({
       imgsArrangeArr[i].pos.top=getRandomBetween(this.Constant.topMin,this.Constant.topMax);
       imgsArrangeArr[i].rotate=getRandomAngle();
       imgsArrangeArr[i].isCenter=false;
+      imgsArrangeArr[i].isInverse=false;
     }
     imgsArrangeArr[centerIndex].pos.left=this.Constant.leftCenter;
     imgsArrangeArr[centerIndex].pos.top=this.Constant.topCenter;
@@ -115,7 +140,6 @@ var GalleryApp=React.createClass({
     this.Constant.topMax=Math.ceil(stageHeight-imgHeight/2);
     this.Constant.leftCenter=Math.ceil(stageWidth/2-imgWidth/2);
     this.Constant.topCenter=Math.ceil(stageHeight/2-imgHeight/2);
-    this.Constant.stageHeight=stageHeight;
     this.reArrange(0);
   },
 
@@ -125,13 +149,30 @@ var GalleryApp=React.createClass({
     }.bind(this);
   },
 
+  inverse: function(i){
+    return function(){
+      var imgsArrangeArr=this.state.imgsArrangeArr;
+      imgsArrangeArr[i].isInverse=true;
+      this.setState({
+        imgsArrangeArr: imgsArrangeArr
+      });
+    }.bind(this);
+  },
+
+  forward: function(i){
+    return function(){
+      var imgsArrangeArr=this.state.imgsArrangeArr;
+      imgsArrangeArr[i].isInverse=false;
+      this.setState({
+        imgsArrangeArr:imgsArrangeArr
+      });
+    }.bind(this);
+  },
+
   render: function(){
     var ImageModules=[],
         CtrlModules=[];
     for(var i=0;i<11;i++){
-      var data={};
-      data.imgUrl='./img/'+i+'.jpg';
-      data.title='Hello World'
       if(!this.state.imgsArrangeArr[i]){
         this.state.imgsArrangeArr[i]={
           pos:{
@@ -140,19 +181,13 @@ var GalleryApp=React.createClass({
           },
           rotate:'0deg',
           isCenter:false,
+          isInverse:false
         }
       }
-      // var center=(function(i){
-      //   return function(){
-      //     this.reArrange(i);
-      //   }.bind(this);
-      // })(i);
-      // console.log(center);
       var styleObj={};
       styleObj['height']=this.state.stageHeight;
-      console.log(styleObj.height);
-      ImageModules.push(<ImageModule key={i} data={data} ref={"img"+i} arrange={this.state.imgsArrangeArr[i]}/>);
-      CtrlModules.push(<CtrlModule key={i} isCenter={this.state.imgsArrangeArr[i].isCenter} reArrange={this.center(i)}/>);
+      ImageModules.push(<ImageModule key={i} data={data[i]} ref={"img"+i} arrange={this.state.imgsArrangeArr[i]} forward={this.forward(i)} inverse={this.inverse(i)} reArrange={this.center(i)}/>);
+      CtrlModules.push(<CtrlModule key={i} isCenter={this.state.imgsArrangeArr[i].isCenter} forward={this.forward(i)} inverse={this.inverse(i)} reArrange={this.center(i)}/>);
     }
     return (
       <section className='stage' ref='stage' style={styleObj}>
